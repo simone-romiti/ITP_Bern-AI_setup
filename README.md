@@ -22,6 +22,10 @@ Both use the API at `https://api.swissai.svc.cscs.ch/v1` and a Swiss AI API key.
   ```
 
 - A Swiss AI API key for the CSCS endpoint. Keep it for the next step.
+- On MacOS: `colima`. You can run `setup_macos.sh`, which will check for both
+  docker and colima, and install them if necessary. This script also checks if
+  `colima` is running and starts it if required. Thus, run this script every
+  time before you use the tools below.
 
 ## 2. Put your API key in `.env` (once)
 
@@ -116,6 +120,7 @@ Run on the host, from anywhere:
 │   ├── build_image-opencode.sh
 │   ├── env.sh                # shared .env loader
 │   └── run-opencode.sh       # OpenCode launcher
+├── setup_macos.sh            # MacOS setup helper
 ├── run-opencode.sh           # symlink -> docker_setup/run-opencode.sh
 └── run-openwebui.sh          # OpenWebUI launcher
 ```
