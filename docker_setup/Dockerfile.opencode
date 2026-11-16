@@ -1,0 +1,50 @@
+FROM docker/sandbox-templates:opencode-docker
+
+USER root
+
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+
+RUN apt-get update && \
+    apt-get install -y sudo curl xdg-utils \
+        ca-certificates git build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+# Pin the official opencode v1 line. The base image installs `opencode-ai`
+# unpinned, and the newer v2 line (@opencode/cli) introduced regressions; the
+# pin keeps every user's container on the same release.
+# `--include=optional` is required because the platform binary ships as an
+# optional dependency; `opencode --version` verifies the pin at build time.
+ARG OPENCODE_VERSION=1.19.5
+RUN npm install -g "opencode-ai@${OPENCODE_VERSION}" --include=optional && \
+    opencode --version
+
+# 1. Remove the default 'agent' and 'ubuntu' users/groups to free up UID/GID 1000
+RUN userdel -r agent 2>/dev/null || true && \
+    groupdel agent 2>/dev/null || true && \
+    userdel -r ubuntu 2>/dev/null || true && \
+    groupdel ubuntu 2>/dev/null || true
+
+# 2. Create a user matching the host UID/GID, so bind-mounted files stay owned
+#    by you on the host.
+RUN getent group "${USER_GID}" || groupadd -g "${USER_GID}" "${USERNAME}" && \
+    useradd -m -u "${USER_UID}" -g "${USER_GID}" -s /bin/bash "${USERNAME}"
+
+# 3. Setup passwordless sudo
+RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME}
+
+# 4. Automatically log in as $USERNAME on startup
+USER ${USERNAME}
+
+# 5. Pre-create the directories opencode writes to, so Docker does not create
+#    missing bind-mount parents as root:root (which breaks opencode with EACCES).
+RUN mkdir -p \
+      /home/${USERNAME}/.local/share \
+      /home/${USERNAME}/.local/state \
+      /home/${USERNAME}/.cache \
+      /home/${USERNAME}/.config \
+      /home/${USERNAME}/workspace
+
+WORKDIR /home/${USERNAME}/workspace

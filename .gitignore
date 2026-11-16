@@ -1,0 +1,12 @@
+# Personal configuration / secrets
+.env
+
+# OpenCode sessions, state and cache (created next to the launcher)
+.opencode_data/
+
+# OpenWebUI database backups created by run-openwebui.sh
+backups/
+
+# Editor / OS noise
+*.swp
+.DS_Store
