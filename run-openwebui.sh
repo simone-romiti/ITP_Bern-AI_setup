@@ -131,7 +131,7 @@ key_hash() {
 }
 
 launch_signature() {
-  echo "port=${HOST_PORT}:${CONTAINER_PORT}|volume=${VOLUME_NAME}|base=${API_BASE}|key=$(key_hash)"
+  echo "port=${HOST_PORT}:${CONTAINER_PORT}|volume=${VOLUME_NAME}|base=${API_BASE}|key=$(key_hash)|config=env"
 }
 
 # --- Pull the image --------------------------------------------------------
@@ -223,6 +223,7 @@ else
   if ! docker run -d \
       -p "0.0.0.0:${HOST_PORT}:${CONTAINER_PORT}" \
       --add-host=host.docker.internal:host-gateway \
+      -e "ENABLE_PERSISTENT_CONFIG=false" \
       -e "OPENAI_API_BASE_URLS=${API_BASE}" \
       -e "OPENAI_API_BASE_URL=${API_BASE}" \
       -e "OPENAI_API_KEYS=${SWISSAI_RESEARCH_API_KEY}" \
