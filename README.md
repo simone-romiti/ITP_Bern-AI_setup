@@ -87,6 +87,10 @@ Run on the host, from anywhere:
 - Docker port forwarding: `-p 0.0.0.0:3000:8080`. Open
   <http://localhost:3000> on the machine, or `http://<host-ip>:3000` from the
   network.
+- The directory you run the script from is bind-mounted read-write at
+  `/workspace` inside the container (override with `OPENWEBUI_WORKSPACE` and
+  `OPENWEBUI_WORKSPACE_DIR`), so tools running in the container can access the
+  same files as OpenCode.
 - From a remote machine, an SSH tunnel is the simplest and safest option:
 
   ```bash

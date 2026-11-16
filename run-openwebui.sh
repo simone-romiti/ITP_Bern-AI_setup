@@ -35,6 +35,10 @@
 #   OPENWEBUI_NO_WAIT=1        skip waiting entirely
 #   OPENWEBUI_BACKUP_DIR       where webui.db is saved before a recreate
 #                              (default: ${XDG_DATA_HOME:-~/.local/share}/open-webui/backups)
+#   OPENWEBUI_WORKSPACE        host directory bind-mounted read-write into the
+#                              container (default: the current working directory)
+#   OPENWEBUI_WORKSPACE_DIR    mount point inside the container
+#                              (default: /workspace)
 #
 # Before a recreate due to an image/parameter change the SQLite database is
 # copied out of the container to OPENWEBUI_BACKUP_DIR. The data volume is
@@ -80,6 +84,8 @@ CONTAINER_PORT="${OPENWEBUI_CONTAINER_PORT:-8080}"
 VOLUME_NAME="${OPENWEBUI_VOLUME:-open-webui}"
 API_BASE="${OPENWEBUI_API_BASE:-https://api.swissai.svc.cscs.ch/v1}"
 BACKUP_DIR="${OPENWEBUI_BACKUP_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/open-webui/backups}"
+WORKSPACE="${OPENWEBUI_WORKSPACE:-$(pwd -P)}"
+WORKSPACE_DIR="${OPENWEBUI_WORKSPACE_DIR:-/workspace}"
 
 # --- Prerequisites ---------------------------------------------------------
 if ! command -v docker >/dev/null 2>&1; then
@@ -131,7 +137,7 @@ key_hash() {
 }
 
 launch_signature() {
-  echo "port=${HOST_PORT}:${CONTAINER_PORT}|volume=${VOLUME_NAME}|base=${API_BASE}|key=$(key_hash)|config=env"
+  echo "port=${HOST_PORT}:${CONTAINER_PORT}|volume=${VOLUME_NAME}|base=${API_BASE}|key=$(key_hash)|config=env|workspace=${WORKSPACE}:${WORKSPACE_DIR}"
 }
 
 # --- Pull the image --------------------------------------------------------
@@ -229,6 +235,7 @@ else
       -e "OPENAI_API_KEYS=${SWISSAI_RESEARCH_API_KEY}" \
       -e "OPENAI_API_KEY=${SWISSAI_RESEARCH_API_KEY}" \
       -v "${VOLUME_NAME}:/app/backend/data" \
+      -v "${WORKSPACE}:${WORKSPACE_DIR}:rslave" \
       --label "openwebui.launch-sig=$(launch_signature)" \
       --name "$CONTAINER_NAME" \
       --restart always \
@@ -242,6 +249,7 @@ fi
 if container_running; then
   echo "Container '${CONTAINER_NAME}' is running."
   echo "Port-forwarding flag: -p 0.0.0.0:${HOST_PORT}:${CONTAINER_PORT} (listening on all interfaces)"
+  echo "Workspace mount: ${WORKSPACE} -> ${WORKSPACE_DIR} (read-write)"
   print_url "Open WebUI address (starting - not ready yet):"
 else
   echo "ERROR: container '$CONTAINER_NAME' is not running." >&2
