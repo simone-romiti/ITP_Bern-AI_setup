@@ -71,6 +71,11 @@ This drops you into a shell inside the container; start the agent with
 - Config: [`config/opencode.json`](config/opencode.json) is mounted at
   `~/.config/opencode` in the container. It lists the available models and sets
   the default. Edit it in the repository to change models or permissions.
+- **Clipboard**: on Linux with Wayland or X11, the launcher forwards the host
+  display socket, so `wl-copy`/`wl-paste` and `xclip` inside the container use
+  your host clipboard (both packages are in the image). This works automatically
+  when `WAYLAND_DISPLAY` or `DISPLAY` is set; it is a no-op on headless machines
+  and on macOS.
 - Exit the TUI (`Ctrl+C` / `/exit`) to leave; the container keeps running in the
   background. Re-run the script to reconnect.
 
@@ -146,3 +151,8 @@ Run on the host, from anywhere:
   run and recreates the container when the image changes. Use
   `OPENWEBUI_RESET=1 ./run-openwebui.sh` to force a fresh container (data volume
   kept, database backed up first).
+
+## Links
+
+- Swiss AI platform (model list): https://serving.swissai.svc.cscs.ch/
+- CSCS AI Slack channel: https://swissai-initiative.slack.com/archives/C07DHJFRE2X

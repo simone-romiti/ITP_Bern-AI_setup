@@ -6,9 +6,12 @@ ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
+# wl-clipboard + xclip: let programs inside the container talk to the host
+# clipboard through the forwarded Wayland/X11 socket (see run-opencode.sh).
 RUN apt-get update && \
     apt-get install -y sudo curl xdg-utils \
-        ca-certificates git build-essential && \
+        ca-certificates git build-essential \
+        wl-clipboard xclip && \
     rm -rf /var/lib/apt/lists/*
 
 # Pin the official opencode v1 line. The base image installs `opencode-ai`

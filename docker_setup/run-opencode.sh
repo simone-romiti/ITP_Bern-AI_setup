@@ -68,7 +68,7 @@ fi
 IMAGE_ID="$(docker image inspect -f '{{.Id}}' "$IMAGE")"
 
 # Signature of what the container was built with; mismatch => recreate.
-SIG="$WORKSPACE|$PORTS|rslave|$CONFIG_DIR|data-v2:$SESSION_DIR|state-v1:$STATE_DIR|cache-v1:$CACHE_DIR|no-audio"
+SIG="$WORKSPACE|$PORTS|rslave|$CONFIG_DIR|data-v2:$SESSION_DIR|state-v1:$STATE_DIR|cache-v1:$CACHE_DIR|no-audio|clip-v1:${DISPLAY:-}|${WAYLAND_DISPLAY:-}|${XAUTHORITY:-}"
 OLD_SIG="$(docker inspect -f '{{ index .Config.Labels "itp.sig" }}' "$NAME" 2>/dev/null || true)"
 
 if [[ -n "$OLD_SIG" && "$OLD_SIG" != "$SIG" ]]; then
@@ -102,6 +102,32 @@ if ! docker inspect "$NAME" >/dev/null 2>&1; then
         port_args+=(-p "$p:$p")
     done
 
+    # Forward the host clipboard into the container. Inside it, wl-copy/wl-paste
+    # (Wayland) or xclip/xsel (X11) reach the host compositor through the
+    # forwarded socket - both are installed in the image. This is a no-op on
+    # headless machines and on macOS.
+    display_args=()
+    if [[ -n "${WAYLAND_DISPLAY:-}" && -n "${XDG_RUNTIME_DIR:-}" ]]; then
+        wayland_socket="$WAYLAND_DISPLAY"
+        [[ "$wayland_socket" = /* ]] || wayland_socket="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+        if [[ -S "$wayland_socket" ]]; then
+            display_args+=(
+                -e "WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
+                -e "XDG_RUNTIME_DIR=/tmp/runtime-dir"
+                -v "$wayland_socket:/tmp/runtime-dir/$WAYLAND_DISPLAY"
+            )
+        fi
+    fi
+    if [[ -n "${DISPLAY:-}" && -d /tmp/.X11-unix ]]; then
+        display_args+=(-e "DISPLAY=$DISPLAY" -v /tmp/.X11-unix:/tmp/.X11-unix:ro)
+        # X11 needs the auth cookie, otherwise xclip fails with
+        # "Can't open display".
+        xauth_file="${XAUTHORITY:-$HOME/.Xauthority}"
+        if [[ -f "$xauth_file" ]]; then
+            display_args+=(-e "XAUTHORITY=/tmp/.Xauthority" -v "$xauth_file:/tmp/.Xauthority:ro")
+        fi
+    fi
+
     docker run -d --init \
         --name "$NAME" \
         --label "itp.sig=$SIG" \
@@ -115,6 +141,7 @@ if ! docker inspect "$NAME" >/dev/null 2>&1; then
         -e OPENCODE_CONFIG_DIR="$HOME_IN/.config/opencode" \
         -e OPENCODE_CONFIG="$HOME_IN/.config/opencode/opencode.json" \
         -e SWISSAI_RESEARCH_API_KEY \
+        "${display_args[@]}" \
         "${port_args[@]}" \
         --entrypoint sleep "$IMAGE" infinity >/dev/null
 fi
