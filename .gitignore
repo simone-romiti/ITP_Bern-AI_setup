@@ -1,5 +1,11 @@
+
+# temporary files
+*~
+
 # Personal configuration / secrets
 .env
+
+
 
 # OpenCode sessions, state and cache (created next to the launcher)
 .opencode_data/
