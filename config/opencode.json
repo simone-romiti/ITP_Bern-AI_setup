@@ -3,7 +3,7 @@
     "*": "allow"
   },
   "$schema": "https://opencode.ai/config.json",
-  "model": "swissai/RCP-AIaaS/deepseek-ai/DeepSeek-V4.1-Flash",
+  "model": "swissai/RCP-AIaaS/deepseek-ai/DeepSeek-V4.1-Flash-1017",
   "provider": {
     "swissai": {
       "npm": "@ai-sdk/openai-compatible",
@@ -13,20 +13,14 @@
         "apiKey": "{env:SWISSAI_RESEARCH_API_KEY}"
       },
       "models": {
+        "CSCS-Inference/Qwen/Qwen3.8-27B-FP8": {
+          "name": "Qwen3.8-27B-FP8"
+        },
+        "CSCS-Inference/Qwen/Qwen3.8-Flash-Next-FP8": {
+          "name": "Qwen3.8-Flash-Next-FP8"
+        },
         "CSCS-Inference/google/gemma-4-31B-it": {
           "name": "gemma-4-31B-it"
-        },
-        "CSCS-Inference/moonshotai/Kimi-K2.7-Code": {
-          "name": "Kimi-K2.7-Code"
-        },
-        "CSCS-Inference/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16": {
-          "name": "NVIDIA-Nemotron-3-Super-120B-A12B-BF16"
-        },
-        "CSCS-Inference/swiss-ai/Apertus-70B-Instruct-2509": {
-          "name": "Apertus-70B-Instruct-2509"
-        },
-        "CSCS-Inference/swiss-ai/Apertus-8B-Instruct-2509": {
-          "name": "Apertus-8B-Instruct-2509"
         },
         "CSCS-Inference/swiss-ai/Apertus-v1.5-70B": {
           "name": "Apertus-v1.5-70B"
@@ -40,11 +34,11 @@
         "CSCS-Inference/swiss-ai/Apertus-v1.5-8B-thinking": {
           "name": "Apertus-v1.5-8B-thinking"
         },
-        "CSCS-Inference/zai-org/GLM-5.2": {
-          "name": "GLM-5.2"
-        },
         "CSCS-Inference/zai-org/GLM-5.3": {
           "name": "GLM-5.3"
+        },
+        "CSCS-Inference/zai-org/GLM-5.3-Flash": {
+          "name": "GLM-5.3-Flash"
         },
         "RCP-AIaaS/BAAI/bge-reranker-v2-m3": {
           "name": "bge-reranker-v2-m3"
@@ -69,9 +63,6 @@
         },
         "RCP-AIaaS/Qwen/Qwen3.6-35B-A3B": {
           "name": "Qwen3.6-35B-A3B"
-        },
-        "RCP-AIaaS/deepseek-ai/DeepSeek-V4.1-Flash": {
-          "name": "DeepSeek-V4.1-Flash"
         },
         "RCP-AIaaS/deepseek-ai/DeepSeek-V4.1-Flash-1017": {
           "name": "DeepSeek-V4.1-Flash-1017"
@@ -112,17 +103,32 @@
         "RCP-AIaaS/zai-org/GLM-5.3-Flash": {
           "name": "GLM-5.3-Flash"
         },
-        "SwissAI-Research/Qwen/Qwen3-8B": {
-          "name": "Qwen3-8B"
-        },
         "SwissAI-Research/Qwen/Qwen3.8-27B": {
           "name": "Qwen3.8-27B"
         },
-        "SwissAI-Research/google/gemma-4-E4B-it": {
-          "name": "gemma-4-E4B-it"
+        "SwissAI-Research/swiss-ai/Apertus-v1.5-8B-dprime": {
+          "name": "Apertus-v1.5-8B-dprime"
+        },
+        "SwissAI-Research/swiss-ai/Apertus-v1.5-8B-dspark-e10-k3": {
+          "name": "Apertus-v1.5-8B-dspark-e10-k3"
+        },
+        "SwissAI-Research/swiss-ai/Apertus-v1.5-8B-fixed": {
+          "name": "Apertus-v1.5-8B-fixed"
+        },
+        "SwissAI-Research/swiss-ai/Apertus-v1.5-8B-issue-fix": {
+          "name": "Apertus-v1.5-8B-issue-fix"
+        },
+        "SwissAI-Research/swiss-ai/Apertus-v1.5-8B-tools-thinking": {
+          "name": "Apertus-v1.5-8B-tools-thinking"
+        },
+        "SwissAI-Research/swiss-ai/chonk-lc-16k-v0.2-sft": {
+          "name": "chonk-lc-16k-v0.2-sft"
         },
         "vvmoskvoretskii/pbmtsft/cite-epe-rmid-epe-3b": {
           "name": "cite-epe-rmid-epe-3b"
+        },
+        "vvmoskvoretskii/pbmtsft/cite-normal-nbd-3b": {
+          "name": "cite-normal-nbd-3b"
         },
         "vvmoskvoretskii/pbmtsft/util-t0mt-3b": {
           "name": "util-t0mt-3b"
