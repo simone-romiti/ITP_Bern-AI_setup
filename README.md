@@ -1,7 +1,6 @@
 # ITP Bern — AI setup
 
-Docker-based setup for using the LLMs hosted at CSCS (Swiss AI Services) from
-ITP Bern machines:
+Docker-based setup for using the LLMs hosted at CSCS (Swiss AI Services):
 
 - **OpenCode** — terminal AI coding agent (TUI) in a container.
 - **OpenWebUI** — browser chat interface to the same models.
